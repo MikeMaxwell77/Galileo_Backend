@@ -40,7 +40,7 @@ public class Accounts {
 		this.email = email;
 	}
 
-	public Long getId() {
+	public Long getID() {
 		return id;
 	}
 
