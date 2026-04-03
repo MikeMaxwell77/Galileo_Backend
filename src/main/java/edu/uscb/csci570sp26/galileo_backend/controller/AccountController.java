@@ -24,11 +24,14 @@ public class AccountController {
 	Accounts newAccount(@RequestBody Accounts newAccount) {
 		return accountsRepository.save(newAccount);
 	}
-
+	
+	//was in the demo project, but we might want this skeleton for search functionality later on
+	/*
 	@GetMapping("/accounts")
 	List<Accounts> getAllAccounts() {
 		return accountsRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));// sort users by ID in ascending order
 	}
+	*/
 
 	
 	@GetMapping("/account/{id}")
@@ -41,6 +44,7 @@ public class AccountController {
 	Accounts updateAccount(@RequestBody Accounts newAccount, @PathVariable Long id) {
 		return accountsRepository.findById(id)
  	    	.map(account -> {
+ 	    		account.setEmail(newAccount.getEmail());
  	        	account.setUsername(newAccount.getUsername());
  				account.setPassword(newAccount.getPassword());
  				return accountsRepository.save(account);

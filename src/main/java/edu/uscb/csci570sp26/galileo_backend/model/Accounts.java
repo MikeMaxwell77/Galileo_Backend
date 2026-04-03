@@ -19,19 +19,10 @@ public class Accounts {
 	@Column(nullable = false, unique = true)  // Ensures email is unique and not null
 	private String email;
 	
-	@Column(nullable = false)  // Ensures role is not null
+	//@Column(nullable = false)  // Ensures role is not null
 	private boolean privacy = false;  // true for admin, false for regular user
 
-	// Getters and setters for all fields
-	public boolean isPrivacy() {
-		return privacy;
-	}
-
-	public void setPrivacy(boolean privacy) {
-		this.privacy = privacy;
-	}
-
-	
+	// Getters and setters for all fields	
 	public String getEmail() {
 		return email;
 	}
@@ -62,6 +53,14 @@ public class Accounts {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public boolean isPrivacy() {
+		return privacy;
+	}
+
+	public void setPrivacy(boolean privacy) {
+		this.privacy = privacy;
 	}
 	
 	
