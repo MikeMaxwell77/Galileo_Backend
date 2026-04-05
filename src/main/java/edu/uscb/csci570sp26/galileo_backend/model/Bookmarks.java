@@ -25,10 +25,10 @@ public class Bookmarks {
 	private long timestamp; // Time when the bookmark was created
 	
 	@Column(nullable = false)
-	private int latitude; // Latitude of the bookmarked location
+	private double latitude; // Latitude of the bookmarked location
 	
 	@Column(nullable = false)
-	private int longitude; // Longitude of the bookmarked location
+	private double longitude; // Longitude of the bookmarked location
 	
 	private Long CollectionID; // Optional field for grouping bookmarks into collections (can be null)
 	
@@ -74,19 +74,19 @@ public class Bookmarks {
 		this.timestamp = timestamp;
 	}
 
-	public int getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(int latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public int getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(int longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 
