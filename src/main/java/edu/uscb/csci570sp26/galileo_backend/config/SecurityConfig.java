@@ -11,7 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig {
-
+	
+	// We will at some point need to configure this further 
+	// A helpful gist from dr. Canada: https://gist.github.com/doctorcanada/36e5640977e4fa0a3f371d3a34e28df7
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
