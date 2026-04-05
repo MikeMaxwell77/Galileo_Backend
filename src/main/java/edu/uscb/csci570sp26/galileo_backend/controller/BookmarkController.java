@@ -24,13 +24,12 @@ public class BookmarkController {
 		return bookmarksRepository.save(newBookmark);
 	}
 	
-	//was in the demo project, but we might want this skeleton for search functionality later on
-	/*
-	@GetMapping("/bookmarks")
-	List<Bookmarks> getAllBookmarks() {
+	//get all bookmarks for a single account
+	@GetMapping("/bookmarks/{accountID}")
+	List<Bookmarks> getAllBookmarksByAccount() {
 		return bookmarksRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));// sort users by ID in ascending order
 	}
-	*/
+	
 
 	
 	@GetMapping("/bookmark/{id}")
@@ -67,4 +66,4 @@ public class BookmarkController {
 
 	}
 
-} // end class UserController
+} // end class BookmarkController
