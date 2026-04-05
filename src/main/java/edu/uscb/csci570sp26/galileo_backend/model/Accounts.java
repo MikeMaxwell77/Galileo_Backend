@@ -22,6 +22,17 @@ public class Accounts {
 	//@Column(nullable = false)  // Ensures role is not null
 	private boolean privacy = false;  // true for admin, false for regular user
 
+	// Constructors
+	public Accounts() {
+		
+	};
+	public Accounts(String username, String email, String password) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
+
+	
 	// Getters and setters for all fields	
 	public String getEmail() {
 		return email;
