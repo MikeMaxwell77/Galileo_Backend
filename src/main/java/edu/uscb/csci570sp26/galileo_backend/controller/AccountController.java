@@ -15,16 +15,16 @@ import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
 @RestController
 public class AccountController {
 
-	
+
 	@Autowired
 	private AccountsRepository accountsRepository;
 
-	
+
 	@PostMapping("/account")
 	Accounts newAccount(@RequestBody Accounts newAccount) {
 		return accountsRepository.save(newAccount);
 	}
-	
+
 	//was in the demo project, but we might want this skeleton for search functionality later on
 	/*
 	@GetMapping("/accounts")
@@ -33,11 +33,16 @@ public class AccountController {
 	}
 	*/
 
-	
+
 	@GetMapping("/account/{id}")
 	Accounts getAccountById(@PathVariable Long id) {
 		return accountsRepository.findById(id)
  	    	.orElseThrow(() -> new RuntimeException("Account not found with id " + id));
+	}
+
+	@GetMapping("/accounts/search")
+	List<Accounts> searchByUsername(@RequestParam String username) {
+		return accountsRepository.findByUsernameContainingIgnoreCase(username);
 	}
 
 	@PutMapping("/account/{id}")
@@ -50,9 +55,9 @@ public class AccountController {
  				return accountsRepository.save(account);
  	        }).orElseThrow(() -> new RuntimeException("Account not found with id " + id));
 	}
-	
 
-	
+
+
 	@DeleteMapping("/account/{id}")
 	String deleteAccount(@PathVariable Long id) {
 		if(!accountsRepository.existsById(id)) {
