@@ -41,8 +41,8 @@ public class AccountController {
 	}
 
 	@GetMapping("/accounts/search")
-	List<Accounts> searchByUsername(@RequestParam String username) {
-		return accountsRepository.findByUsernameContainingIgnoreCase(username);
+	List<Accounts> searchByEmail(@RequestParam String email) {
+		return accountsRepository.findByEmailContainingIgnoreCase(email);
 	}
 
 	@PutMapping("/account/{id}")
@@ -50,7 +50,6 @@ public class AccountController {
 		return accountsRepository.findById(id)
  	    	.map(account -> {
  	    		account.setEmail(newAccount.getEmail());
- 	        	account.setUsername(newAccount.getUsername());
  				account.setPassword(newAccount.getPassword());
  				return accountsRepository.save(account);
  	        }).orElseThrow(() -> new RuntimeException("Account not found with id " + id));

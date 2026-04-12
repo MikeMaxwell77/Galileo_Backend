@@ -30,7 +30,6 @@ public class AccountsRepositoryTest{
 		// Arrange
 		Accounts account = new Accounts();
 		account.setEmail("test@email.com");
-		account.setUsername("testuser");
 		account.setPassword("testpassword");
 		account = accountsRepository.save(account);
 
@@ -39,7 +38,6 @@ public class AccountsRepositoryTest{
 		
 		// Assert
 		assertTrue(foundAccount.isPresent());
-		assertEquals("testuser", foundAccount.get().getUsername());
 		assertEquals("testpassword", foundAccount.get().getPassword());
 		assertEquals("test@email.com", foundAccount.get().getEmail());
 	}
@@ -49,14 +47,12 @@ public class AccountsRepositoryTest{
 		// Arrange
 		Accounts account = new Accounts();
 		account.setEmail("new@email.com");
-		account.setUsername("newaccount");
 		account.setPassword("newpassword");
 
 		// Act
 		Accounts savedAccount = accountsRepository.save(account);
 
 		// Assert
-		assertEquals("newaccount", savedAccount.getUsername());
 		assertTrue(accountsRepository.findById(savedAccount.getId()).isPresent());
 	}
 	
@@ -65,7 +61,6 @@ public class AccountsRepositoryTest{
 		// Arrange
 		Accounts account = new Accounts();
 		account.setEmail("delete@email.com");
-		account.setUsername("deleteuser");
 		account.setPassword("deletepassword");
 		account = accountsRepository.save(account);
 

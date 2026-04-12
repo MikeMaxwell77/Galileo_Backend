@@ -69,7 +69,7 @@ public class AccountControllerTest {
     @Test
     public void testCreateAccount() throws Exception {
         // Arrange
-        String newAccountJson = "{\"email\":\"johndoe2@example.com\",\"username\":\"JohnDoe2\",\"password\":\"password\"}";
+        String newAccountJson = "{\"email\":\"johndoe2@example.com\",\"password\":\"password\"}";
         logger.info("Testing createAccount with payload: {}", newAccountJson);
 
         // Act & Assert
@@ -78,7 +78,6 @@ public class AccountControllerTest {
                 .content(newAccountJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("johndoe2@example.com"))
-                .andExpect(jsonPath("$.username").value("JohnDoe2"))
                 .andExpect(jsonPath("$.password").value("password"));
 
         logger.info("testCreateAccount passed.");
@@ -87,7 +86,7 @@ public class AccountControllerTest {
     @Test
     public void testUpdateAccount() throws Exception {
         // Arrange
-    	String updatedAccountJson = "{\"email\":\"janedoe2@example.com\",\"username\":\"JaneDoe2\",\"password\":\"passwordA\"}";
+    	String updatedAccountJson = "{\"email\":\"janedoe2@example.com\",\"password\":\"passwordA\"}";
         logger.info("Testing updateAccount with payload: {}", updatedAccountJson);
 
         // Act & Assert
@@ -96,7 +95,6 @@ public class AccountControllerTest {
                 .content(updatedAccountJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("janedoe2@example.com"))
-                .andExpect(jsonPath("$.username").value("JaneDoe2"))
                 .andExpect(jsonPath("$.password").value("passwordA"));
 
         logger.info("testUpdateAccount passed.");
