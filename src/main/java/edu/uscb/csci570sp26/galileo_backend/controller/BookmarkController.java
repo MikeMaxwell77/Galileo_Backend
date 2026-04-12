@@ -6,10 +6,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort; // needed for sorting list of users by ID
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 //import edu.uscb.csci570sp26.galileo_backend.exception.BookmarkNotFoundException;
 import edu.uscb.csci570sp26.galileo_backend.model.Bookmarks;
+import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
 import edu.uscb.csci570sp26.galileo_backend.repository.BookmarksRepository;
 
 @RestController
@@ -17,6 +20,8 @@ public class BookmarkController {
 
 	@Autowired
 	private BookmarksRepository bookmarksRepository;
+	@Autowired
+	private AccountsRepository accountsRepository;
 
 	
 	@PostMapping("/bookmark")
@@ -26,8 +31,12 @@ public class BookmarkController {
 	
 	//get all bookmarks for a single account
 	@GetMapping("/bookmarks/{accountID}")
-	List<Bookmarks> getAllBookmarksByAccount() {
-		return bookmarksRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));// sort users by ID in ascending order
+	List<Bookmarks> getAllBookmarksByAccount(@PathVariable Long accountID) {
+		if (!accountsRepository.existsById(accountID)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id not found");
+		}
+		
+		return bookmarksRepository.findByAccountID(accountID);// sort users by ID in ascending order
 	}
 	
 

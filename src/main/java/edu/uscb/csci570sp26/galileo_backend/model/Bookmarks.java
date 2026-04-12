@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.GregorianCalendar;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity  // Tells JPA to create a table for this class
 @Table(name = "Bookmarks")  // Specifies the table name in the database
 public class Bookmarks {
@@ -19,6 +21,7 @@ public class Bookmarks {
 	private String whichAPI; // Identifier which API
 	
 	@Column(nullable = false)
+	@JsonProperty("API_identifier")
 	private String API_identifier; // Identifier within the API (e.g., planet name, star name, etc.)
 	
 	@Column(nullable = false) // GMT default

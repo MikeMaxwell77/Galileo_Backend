@@ -38,7 +38,7 @@ public class AccountControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 
         // Insert a test user into the database and retrieve its ID
-        String newAccountJson = "{\"email\":\"johndoe@example.com\",\"username\":\"JohnDoe\",\"password\":\"password\"}";
+        String newAccountJson = "{\"email\":\"johndoe@example.com\",\"password\":\"password\"}";
         String response = mockMvc.perform(post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newAccountJson))
