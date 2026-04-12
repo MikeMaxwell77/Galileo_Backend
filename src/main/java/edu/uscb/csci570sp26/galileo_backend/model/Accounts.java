@@ -10,9 +10,6 @@ public class Accounts {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-generates the ID
 	private Long id;
 	
-	@Column(nullable = false, unique = true)  // Ensures username is unique and not null
-	private String username;
-	
 	@Column(nullable = false)  // Ensures password is not null
 	private String password;
 	
@@ -26,8 +23,7 @@ public class Accounts {
 	public Accounts() {
 		
 	};
-	public Accounts(String username, String email, String password) {
-		this.username = username;
+	public Accounts(String email, String password) {
 		this.email = email;
 		this.password = password;
 	}
@@ -48,14 +44,6 @@ public class Accounts {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	public String getPassword() {

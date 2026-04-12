@@ -24,7 +24,7 @@ public class AuthService {
     /**
      * Registers a new user by encoding their password and saving them to the database.
      */
-    public String registerUser(String username, String email, String password) {
+    public String registerUser(String email, String password) {
         // ✅ Check if user already exists
         if (appUserRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("User already exists.");
@@ -32,7 +32,7 @@ public class AuthService {
 
         // ✅ Encode password before saving user
         String hashedPassword = passwordEncoder.encode(password);
-        Accounts newUser = new Accounts(username,email, hashedPassword);
+        Accounts newUser = new Accounts(email, hashedPassword);
         appUserRepository.save(newUser);
 
         return "User registered successfully";
@@ -56,6 +56,6 @@ public class AuthService {
         }
 
         // ✅ Generate JWT token using JwtUtil
-        return jwtUtil.generateToken(appUser.getEmail(), appUser.getUsername());
+        return jwtUtil.generateToken(appUser.getEmail(),appUser.getPassword());
     }
 }
