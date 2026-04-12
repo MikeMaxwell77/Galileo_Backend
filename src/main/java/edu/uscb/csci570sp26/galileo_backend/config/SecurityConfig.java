@@ -36,6 +36,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // ✅ Stateless sessions
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers(HttpMethod.PUT, "/bookmark/**").hasAuthority("USER")
+            	.requestMatchers(HttpMethod.POST, "/bookmark/**").hasAuthority("USER")
                 .anyRequest().permitAll() // ✅ Allow all requests for now
             ) 
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
