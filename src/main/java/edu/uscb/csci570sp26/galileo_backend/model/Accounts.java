@@ -17,7 +17,7 @@ public class Accounts {
 	private String email;
 	
 	//@Column(nullable = false)  // Ensures role is not null
-	private boolean privacy = false;  // true for admin, false for regular user
+	private boolean privacy = false;  // default we can search them
 
 	// Constructors
 	public Accounts() {

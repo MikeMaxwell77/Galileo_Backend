@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 //import edu.uscb.csci570sp26.galileo_backend.exception.BookmarkNotFoundException;
+import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
 import edu.uscb.csci570sp26.galileo_backend.model.Bookmarks;
 import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
 import edu.uscb.csci570sp26.galileo_backend.repository.BookmarksRepository;
@@ -30,10 +31,23 @@ public class BookmarkController {
 	}
 	
 	//get all bookmarks for a single account
-	@GetMapping("/bookmarks/{accountID}")
+	@GetMapping("/bookmarks/search/{accountID}")
 	List<Bookmarks> getAllBookmarksByAccount(@PathVariable Long accountID) {
+		boolean privateAccount = accountsRepository.findById(accountID)
+				.map(Accounts::isPrivacy)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")); // this occurs if they are not found
+		
+		if (privateAccount ) {// false is default, we want them to be seen
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		}
+		
+		return bookmarksRepository.findByAccountID(accountID);// sort users by ID in ascending order
+	}
+	
+	@GetMapping("/bookmarks/{accountID}")
+	List<Bookmarks> getAllMyBookmarksByAccount(@PathVariable Long accountID) {
 		if (!accountsRepository.existsById(accountID)) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		
 		return bookmarksRepository.findByAccountID(accountID);// sort users by ID in ascending order
