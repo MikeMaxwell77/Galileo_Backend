@@ -1,5 +1,8 @@
 package edu.uscb.csci570sp26.galileo_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 
 @Entity  // Tells JPA to create a table for this class
@@ -10,6 +13,7 @@ public class Accounts {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-generates the ID
 	private Long id;
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Column(nullable = false)  // Ensures password is not null
 	private String password;
 	
