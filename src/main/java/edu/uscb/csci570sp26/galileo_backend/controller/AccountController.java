@@ -40,7 +40,7 @@ public class AccountController {
  	    	.orElseThrow(() -> new RuntimeException("Account not found with id " + id));
 	}
 
-	@GetMapping("/accounts/search")
+	@GetMapping("/accounts/search/{email}")
 	List<Accounts> searchByEmail(@RequestParam String email) {
 		return accountsRepository.findByEmailContainingIgnoreCase(email);
 	}

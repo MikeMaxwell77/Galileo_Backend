@@ -3,6 +3,8 @@ package edu.uscb.csci570sp26.galileo_backend.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -14,9 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.jayway.jsonpath.JsonPath;
+
+import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,7 +59,25 @@ public class AccountControllerTest {
 
         logger.info("Setup complete. Test Account ID: {}", testAccountId);
     }
-
+    
+    @Test
+    public void testSearchByEmail() throws Exception {
+        // Arrange
+        String searchEmail = "johndoe";
+        String fullEmail = "johndoe@example.com";
+        
+        logger.info("Testing searchByEmail with query: {}", searchEmail);
+        
+        // Act & Assert
+        mockMvc.perform(get("/accounts/search/{email}", searchEmail) 
+                .param("email", searchEmail)) 
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].email").value(fullEmail));
+        
+        logger.info("testSearchByEmail passed.");
+    }
+    
     @Test
     public void testGetAccountById() throws Exception {
         // Arrange
