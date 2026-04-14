@@ -16,7 +16,7 @@ public class Accounts {
 	@Column(nullable = false, unique = true)  // Ensures email is unique and not null
 	private String email;
 	
-	//@Column(nullable = false)  // Ensures role is not null
+	@Column(nullable = false)  // Ensures role is not null
 	private boolean privacy = false;  // default we can search them
 
 	// Constructors

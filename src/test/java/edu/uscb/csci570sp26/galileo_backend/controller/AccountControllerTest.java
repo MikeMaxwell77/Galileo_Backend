@@ -69,7 +69,7 @@ public class AccountControllerTest {
         logger.info("Testing searchByEmail with query: {}", searchEmail);
         
         // Act & Assert
-        mockMvc.perform(get("/accounts/search/{email}", searchEmail) 
+        mockMvc.perform(get("/accounts/search") 
                 .param("email", searchEmail)) 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
