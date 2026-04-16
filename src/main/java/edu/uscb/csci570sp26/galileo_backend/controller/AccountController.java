@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 //import edu.uscb.csci570sp26.galileo_backend.exception.UserNotFoundException;
 import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
 import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
-
+import edu.uscb.csci570sp26.galileo_backend.security.JwtUtil;
 
 @RestController
 public class AccountController {
@@ -18,6 +18,9 @@ public class AccountController {
 
 	@Autowired
 	private AccountsRepository accountsRepository;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 
 
 	@PostMapping("/account")
@@ -39,7 +42,17 @@ public class AccountController {
 		return accountsRepository.findById(id)
  	    	.orElseThrow(() -> new RuntimeException("Account not found with id " + id));
 	}
+	
+	@GetMapping("/account/me")
+	Accounts getCurrentAccount(@RequestHeader("Authorization") String authHeader) {
 
+	    String token = authHeader.replace("Bearer ", "");
+		Long userId = jwtUtil.extractUserId(token);
+
+	    return accountsRepository.findById(userId)
+	        .orElseThrow(() -> new RuntimeException("Account not found"));
+	}
+	
 	@GetMapping("/accounts/search")
 	List<Accounts> searchByEmail(@RequestParam String email) {
 		return accountsRepository.findByEmailContainingIgnoreCaseAndPrivacyFalse(email);
@@ -54,6 +67,23 @@ public class AccountController {
  				return accountsRepository.save(account);
  	        }).orElseThrow(() -> new RuntimeException("Account not found with id " + id));
 	}
+	
+	@PutMapping("/account/me")
+	Accounts updateCurrentAccount(
+	    @RequestBody Accounts newAccount,
+	    @RequestHeader("Authorization") String authHeader
+	) {
+	    String token = authHeader.replace("Bearer ", "");
+	    Long userId = jwtUtil.extractUserId(token);
+
+	    Accounts account = accountsRepository.findById(userId)
+	        .orElseThrow(() -> new RuntimeException("Account not found"));
+
+	    account.setEmail(newAccount.getEmail());
+	    account.setPassword(newAccount.getPassword());
+
+	    return accountsRepository.save(account);
+	}
 
 
 
@@ -65,5 +95,20 @@ public class AccountController {
 	 	accountsRepository.deleteById(id);
 	 	return "Account with id " + id + " has been deleted successfully.";
 
+	}
+	
+	@DeleteMapping("/account/me")
+	String deleteCurrentAccount(@RequestHeader("Authorization") String authHeader) {
+
+	    String token = authHeader.replace("Bearer ", "");
+	    Long userId = jwtUtil.extractUserId(token);
+
+	    if (!accountsRepository.existsById(userId)) {
+	        throw new RuntimeException("Account not found");
+	    }
+
+	    accountsRepository.deleteById(userId);
+
+	    return "Deleted successfully";
 	}
 }

@@ -58,4 +58,6 @@ public class AuthService {
         // ✅ Generate JWT token using JwtUtil
         return jwtUtil.generateToken(appUser.getEmail(),"USER", appUser.getId());
     }
+    
+    
 }

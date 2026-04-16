@@ -24,6 +24,7 @@ public class AccountsRepositoryTest{
 
 	@Autowired
 	private AccountsRepository accountsRepository;
+	
 
 	@Test
 	public void testFindById() {
