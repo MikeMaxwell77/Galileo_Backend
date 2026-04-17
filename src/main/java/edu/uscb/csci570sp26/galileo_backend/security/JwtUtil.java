@@ -11,10 +11,10 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}") // Load secret key from application.properties
+    @Value("${jwt.secret}")
     private String secretKey;
 
-    private static final long EXPIRATION_TIME = 86400000; // 24 hours
+    private static final long EXPIRATION_TIME = 86400000;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -38,5 +38,13 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public Long extractUserId(String token) {
+        return validateToken(token).get("id", Long.class);
+    }
+
+    public String extractEmail(String token) {
+        return validateToken(token).getSubject();
     }
 }

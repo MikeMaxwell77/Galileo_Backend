@@ -125,7 +125,7 @@ public class BookmarkControllerTest {
         String privateAccountJson = "{"
                 + "\"email\": \"privateAccount\","
         		+ "\"password\": \"password123\","
-                + "\"privacy\": true"
+                + "\"privacy\": \"true\""
                 + "}";
 
         String accountResponse = mockMvc.perform(post("/account")
