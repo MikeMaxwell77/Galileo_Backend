@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,11 @@ import org.springframework.web.context.WebApplicationContext;
 import com.jayway.jsonpath.JsonPath;
 
 import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
+import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
+import edu.uscb.csci570sp26.galileo_backend.security.JwtUtil;
 
 @SpringBootTest
+//@AutoConfigureMockMvc
 @AutoConfigureMockMvc
 @Transactional
 public class AccountControllerTest {
@@ -34,30 +38,57 @@ public class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    
+    @Autowired
+    private JwtUtil jwtUtil; // Using the real util
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     private Long testAccountId;
+    private String testJwtToken;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private AccountsRepository accountsRepository;
 
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 
         // Insert a test user into the database and retrieve its ID
+        
+        Accounts newAcc = new Accounts();
+        newAcc.setEmail("johndoe@example.com");        
+        newAcc.setPassword(passwordEncoder.encode("password")); 
+        newAcc.setPrivacy(false);
+        
+        accountsRepository.save(newAcc);
+             
+            this.testAccountId = newAcc.getId();
+        
+        
+        // test jwt token generation for the created account
         String newAccountJson = "{\"email\":\"johndoe@example.com\",\"password\":\"password\"}";
-        String response = mockMvc.perform(post("/account")
+        String response = mockMvc.perform(post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newAccountJson))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-
-        // Extract the ID from the response (assuming the response contains the Account ID)
-        Integer id = JsonPath.read(response, "$.id");
-        testAccountId = id.longValue();
+        logger.info("Login response: {}", response);
+        //if (response.contains("token")) {
+            // Simple extraction logic or use ObjectMapper
+            //this.testJwtToken = "Bearer " + response.split("\"token\":\"")[1].split("\"")[0];
+        	//this.testJwtToken = com.jayway.jsonpath.JsonPath.read(response, "$.token");
+        //}
+        
+        this.testJwtToken = response.trim();
 
         logger.info("Setup complete. Test Account ID: {}", testAccountId);
+        logger.info("Generated JWT Token: {}", testJwtToken);
     }
     
     @Test
@@ -92,6 +123,20 @@ public class AccountControllerTest {
     }
 
     @Test
+    public void testGetCurrentAccount() throws Exception {
+    	// Arrange
+    	logger.info("Testing account/me with ID: {}", testAccountId);
+    	
+    	// Act and Assert
+    	mockMvc.perform(get("/account/me")
+    			.header("Authorization", "Bearer " + testJwtToken)) // Use the generated token
+    			.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(testAccountId));
+    	
+    	logger.info("testGetCurrentAccount passed.");
+    }
+    /*
+    @Test
     public void testCreateAccount() throws Exception {
         // Arrange
         String newAccountJson = "{\"email\":\"johndoe2@example.com\",\"password\":\"password\"}";
@@ -106,20 +151,21 @@ public class AccountControllerTest {
                 //.andExpect(jsonPath("$.password").value("password"));
 
         logger.info("testCreateAccount passed.");
-    }
+    }*/
 
     @Test
     public void testUpdateAccount() throws Exception {
         // Arrange
-    	String updatedAccountJson = "{\"email\":\"janedoe2@example.com\",\"password\":\"passwordA\"}";
+    	String updatedAccountJson = "{\"password\":\"passwordA\",\"privacy\":\"false\"}";
         logger.info("Testing updateAccount with payload: {}", updatedAccountJson);
 
         // Act & Assert
-        mockMvc.perform(put("/account/{id}", testAccountId)
+        mockMvc.perform(put("/account/me", testAccountId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedAccountJson))
+                .content(updatedAccountJson)
+                .header("Authorization", "Bearer " + testJwtToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("janedoe2@example.com"));
+                .andExpect(jsonPath("$.privacy").value("false"));
                 //.andExpect(jsonPath("$.password").value("passwordA"));
 
         logger.info("testUpdateAccount passed.");
@@ -131,7 +177,8 @@ public class AccountControllerTest {
         logger.info("Testing deleteAccount with ID: {}", testAccountId);
 
         // Act & Assert
-        mockMvc.perform(delete("/account/{id}", testAccountId))
+        mockMvc.perform(delete("/account/me", testAccountId)
+        		.header("Authorization", "Bearer " + testJwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Account with id " + testAccountId + " has been deleted successfully."));
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
 import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository;
 import edu.uscb.csci570sp26.galileo_backend.security.JwtUtil;
+import org.springframework.security.crypto.password.PasswordEncoder; // update account password
 
 @RestController
 public class AccountController {
@@ -20,16 +21,18 @@ public class AccountController {
 	private AccountsRepository accountsRepository;
 	
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
 	private JwtUtil jwtUtil;
 
-
+	//was in the demo project, but we might want this skeleton for search functionality later on
+		/*
 	@PostMapping("/account")
 	Accounts newAccount(@RequestBody Accounts newAccount) {
 		return accountsRepository.save(newAccount);
 	}
 
-	//was in the demo project, but we might want this skeleton for search functionality later on
-	/*
 	@GetMapping("/accounts")
 	List<Accounts> getAllAccounts() {
 		return accountsRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));// sort users by ID in ascending order
@@ -58,6 +61,7 @@ public class AccountController {
 		return accountsRepository.findByEmailContainingIgnoreCaseAndPrivacyFalse(email);
 	}
 
+	/*
 	@PutMapping("/account/{id}")
 	Accounts updateAccount(@RequestBody Accounts newAccount, @PathVariable Long id) {
 		return accountsRepository.findById(id)
@@ -67,6 +71,7 @@ public class AccountController {
  				return accountsRepository.save(account);
  	        }).orElseThrow(() -> new RuntimeException("Account not found with id " + id));
 	}
+	*/
 	
 	@PutMapping("/account/me")
 	Accounts updateCurrentAccount(
@@ -76,17 +81,16 @@ public class AccountController {
 	    String token = authHeader.replace("Bearer ", "");
 	    Long userId = jwtUtil.extractUserId(token);
 
-	    Accounts account = accountsRepository.findById(userId)
-	        .orElseThrow(() -> new RuntimeException("Account not found"));
-
-	    account.setEmail(newAccount.getEmail());
-	    account.setPassword(newAccount.getPassword());
-
-	    return accountsRepository.save(account);
+	    return accountsRepository.findById(userId)
+	    		.map(account -> {
+	    			account.setPassword(passwordEncoder.encode(newAccount.getPassword()));
+	    			account.setPrivacy(newAccount.isPrivacy());
+	    			return accountsRepository.save(account);
+	    		}).orElseThrow(() -> new RuntimeException("Account not found"));
 	}
 
 
-
+	/*
 	@DeleteMapping("/account/{id}")
 	String deleteAccount(@PathVariable Long id) {
 		if(!accountsRepository.existsById(id)) {
@@ -96,6 +100,7 @@ public class AccountController {
 	 	return "Account with id " + id + " has been deleted successfully.";
 
 	}
+	*/
 	
 	@DeleteMapping("/account/me")
 	String deleteCurrentAccount(@RequestHeader("Authorization") String authHeader) {
@@ -109,6 +114,6 @@ public class AccountController {
 
 	    accountsRepository.deleteById(userId);
 
-	    return "Deleted successfully";
+	    return "Account with id " + userId + " has been deleted successfully.";
 	}
 }
