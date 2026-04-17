@@ -42,6 +42,7 @@ public class BookmarkControllerTest {
 		// Insert a test bookmark into the database and retrieve its ID	
         String newBookmarkJson = "{"
                 + "\"accountID\": 1,"
+        		+ "\"displayName\": \"test\","
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api123\","
                 + "\"timestamp\": 123456789,"
@@ -72,6 +73,7 @@ public class BookmarkControllerTest {
         // Seed a second bookmark for accountID 1
         String secondBookmarkJson = "{"
                 + "\"accountID\": 1,"
+                + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api456\","
                 + "\"timestamp\": 999999999,"
@@ -175,6 +177,7 @@ public class BookmarkControllerTest {
         // Arrange
     	String newBookmarkJson = "{"
                 + "\"accountID\": 3,"
+                + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"ASstronomy\","
                 + "\"api_identifier\": \"api1234\","
                 + "\"timestamp\": 123456969,"
@@ -193,7 +196,8 @@ public class BookmarkControllerTest {
                 .andExpect(jsonPath("$.api_identifier").value("api1234"))
         		.andExpect(jsonPath("$.timestamp").value(123456969))
         		.andExpect(jsonPath("$.latitude").value(-34.0522))
-        		.andExpect(jsonPath("$.longitude").value(118.2437));
+        		.andExpect(jsonPath("$.longitude").value(118.2437))
+        		.andExpect(jsonPath("$.displayName").value("test"));
 
         logger.info("testCreateBookmark passed.");
     }
@@ -203,6 +207,7 @@ public class BookmarkControllerTest {
         // Arrange
     	String updatedBookmarkJson = "{"
                 + "\"accountID\": 3,"
+                + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"AstronomyThree\","
                 + "\"api_identifier\": \"anotherAPI\","
                 + "\"timestamp\": 123,"
@@ -222,7 +227,8 @@ public class BookmarkControllerTest {
                 .andExpect(jsonPath("$.api_identifier").value("anotherAPI"))
                 .andExpect(jsonPath("$.timestamp").value(123))
                 .andExpect(jsonPath("$.latitude").value(-43.0522))
-                .andExpect(jsonPath("$.longitude").value(1.2437));
+                .andExpect(jsonPath("$.longitude").value(1.2437))
+                .andExpect(jsonPath("$.displayName").value("test"));
 
         logger.info("testUpdateBookmark passed.");
     }
