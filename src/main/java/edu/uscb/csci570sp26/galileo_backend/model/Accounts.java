@@ -1,5 +1,8 @@
 package edu.uscb.csci570sp26.galileo_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 
 @Entity  // Tells JPA to create a table for this class
@@ -10,14 +13,15 @@ public class Accounts {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-generates the ID
 	private Long id;
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Column(nullable = false)  // Ensures password is not null
 	private String password;
 	
 	@Column(nullable = false, unique = true)  // Ensures email is unique and not null
 	private String email;
 	
-	//@Column(nullable = false)  // Ensures role is not null
-	private boolean privacy = false;  // true for admin, false for regular user
+	@Column(nullable = false)  // Ensures role is not null
+	private boolean privacy = false;  // default we can search them
 
 	// Constructors
 	public Accounts() {

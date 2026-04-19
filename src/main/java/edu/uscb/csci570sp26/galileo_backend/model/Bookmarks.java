@@ -35,7 +35,13 @@ public class Bookmarks {
 	
 	private Long CollectionID; // Optional field for grouping bookmarks into collections (can be null)
 	
+	// additional fields added after initial creation:
 	
+	@Column(nullable = true)
+	private String displayName;
+	
+	
+
 	// Getters and setters for all fields
 	public Long getId() {
 		return id;
@@ -99,6 +105,14 @@ public class Bookmarks {
 
 	public void setCollectionID(Long collectionID) {
 		CollectionID = collectionID;
+	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	
 	

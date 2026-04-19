@@ -10,4 +10,5 @@ import edu.uscb.csci570sp26.galileo_backend.model.Accounts;
 public interface AccountsRepository extends JpaRepository<Accounts, Long> {
     Optional<Accounts> findByEmail(String email);
     List<Accounts> findByEmailContainingIgnoreCase(String email);
+    List<Accounts> findByEmailContainingIgnoreCaseAndPrivacyFalse(String email);
 }
