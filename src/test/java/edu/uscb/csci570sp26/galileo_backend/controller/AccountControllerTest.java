@@ -67,7 +67,7 @@ public class AccountControllerTest {
         
         accountsRepository.save(newAcc);
              
-            this.testAccountId = newAcc.getId();
+        this.testAccountId = newAcc.getId();
         
         
         // test jwt token generation for the created account

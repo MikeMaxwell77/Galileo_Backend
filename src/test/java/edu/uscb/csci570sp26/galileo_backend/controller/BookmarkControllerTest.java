@@ -21,6 +21,9 @@ import org.hamcrest.Matchers; // easier to compare accounts for the list searche
 
 import com.jayway.jsonpath.JsonPath;
 
+import edu.uscb.csci570sp26.galileo_backend.repository.AccountsRepository; //for private search test
+import edu.uscb.csci570sp26.galileo_backend.model.Accounts; // for private search test
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -33,6 +36,9 @@ public class BookmarkControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+    
+    @Autowired
+    private AccountsRepository accountsRepository;
 
     private Long testBookmarkId;
 
@@ -122,6 +128,7 @@ public class BookmarkControllerTest {
     public void testGetBookmarksByAccountPublicSearch_privateAccount_returns404() throws Exception {
         // Arrange — create a private account and a bookmark under it
         // (assumes you have an endpoint to create accounts, adjust the path as needed)
+    	/*
         String privateAccountJson = "{"
                 + "\"email\": \"privateAccount\","
         		+ "\"password\": \"password123\","
@@ -133,14 +140,46 @@ public class BookmarkControllerTest {
                 .content(privateAccountJson))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-        Integer privateAccountId = JsonPath.read(accountResponse, "$.id");
+                */
+    	Accounts newAcc = new Accounts();
+        newAcc.setEmail("private@account.com");        
+        newAcc.setPassword("password123"); 
+        newAcc.setPrivacy(true);
+        
+        accountsRepository.save(newAcc);
+             
+        long privateAccountId = newAcc.getId();
         logger.info("Created private account with ID: {}", privateAccountId);
+        // Make a bookmark for the private account
+        
+        //this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		// Insert a test bookmark into the database and retrieve its ID	
+        String newBookmarkJson = "{"
+                + "\"accountID\": " + privateAccountId + ","
+                + "\"displayName\": \"test\","
+                + "\"whichAPI\": \"astronomy\","
+                + "\"api_identifier\": \"api123\","
+                + "\"timestamp\": 123456789,"
+                + "\"latitude\": 34.0522,"
+                + "\"longitude\": -118.2437"
+                + "}";
+        
+        String response = mockMvc.perform(post("/bookmark")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newBookmarkJson))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        
+        logger.info("Response to the bookmark creation: {}",response);
 
         // Act & Assert — searching a private account's bookmarks should be blocked
-        mockMvc.perform(get("/bookmarks/search/{accountID}", privateAccountId))
-                .andExpect(status().isNotFound());
-
+        response = mockMvc.perform(get("/bookmarks/search/{accountID}", privateAccountId))
+                .andExpect(status().isNotFound())
+        		.andReturn()
+                .getResponse()
+                .getContentAsString();
+        logger.info("Response to test get Bookmarks by ID: {}",response);
         logger.info("testGetBookmarksByAccountPublicSearch_privateAccount_returns404 passed.");
     }
     
