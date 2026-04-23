@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.GregorianCalendar;
 
+//import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity  // Tells JPA to create a table for this class
@@ -29,7 +31,7 @@ public class Bookmarks {
 	
 	@Column(nullable = false)
 	private double latitude; // Latitude of the bookmarked location
-	
+
 	@Column(nullable = false)
 	private double longitude; // Longitude of the bookmarked location
 	
@@ -40,6 +42,8 @@ public class Bookmarks {
 	@Column(nullable = true)
 	private String displayName;
 	
+	@Column(nullable = true)
+	private long date = 0L;
 	
 
 	// Getters and setters for all fields
@@ -62,7 +66,7 @@ public class Bookmarks {
 	public String getWhichAPI() {
 		return whichAPI;
 	}
-
+	
 	public void setWhichAPI(String whichAPI) {
 		this.whichAPI = whichAPI;
 	}
@@ -115,5 +119,13 @@ public class Bookmarks {
 		this.displayName = displayName;
 	}
 	
+	// get
+	public long getDate() {
+		return date;
+	}
+
+	public void setDate(long date) {
+		this.date = date;
+	}
 	
 }

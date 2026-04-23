@@ -52,6 +52,7 @@ public class BookmarkControllerTest {
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api123\","
                 + "\"timestamp\": 123456789,"
+                + "\"date\": 1234444,"
                 + "\"latitude\": 34.0522,"
                 + "\"longitude\": -118.2437"
                 + "}";
@@ -82,6 +83,7 @@ public class BookmarkControllerTest {
                 + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api456\","
+                + "\"date\": 999999,"
                 + "\"timestamp\": 999999999,"
                 + "\"latitude\": 10.0,"
                 + "\"longitude\": -10.0"
@@ -161,7 +163,8 @@ public class BookmarkControllerTest {
                 + "\"api_identifier\": \"api123\","
                 + "\"timestamp\": 123456789,"
                 + "\"latitude\": 34.0522,"
-                + "\"longitude\": -118.2437"
+                + "\"longitude\": -118.2437,"
+                + "\"date\": 123456790,"
                 + "}";
         
         String response = mockMvc.perform(post("/bookmark")
@@ -220,6 +223,7 @@ public class BookmarkControllerTest {
                 + "\"whichAPI\": \"ASstronomy\","
                 + "\"api_identifier\": \"api1234\","
                 + "\"timestamp\": 123456969,"
+                + "\"date\": 123456969,"
                 + "\"latitude\": -34.0522,"
                 + "\"longitude\": 118.2437"
                 + "}";
@@ -236,7 +240,8 @@ public class BookmarkControllerTest {
         		.andExpect(jsonPath("$.timestamp").value(123456969))
         		.andExpect(jsonPath("$.latitude").value(-34.0522))
         		.andExpect(jsonPath("$.longitude").value(118.2437))
-        		.andExpect(jsonPath("$.displayName").value("test"));
+        		.andExpect(jsonPath("$.displayName").value("test"))
+        		.andExpect(jsonPath("$.date").value(123456969));
 
         logger.info("testCreateBookmark passed.");
     }
@@ -245,13 +250,15 @@ public class BookmarkControllerTest {
     public void testUpdateBookmark() throws Exception {
         // Arrange
     	String updatedBookmarkJson = "{"
-                + "\"accountID\": 3,"
+                + "\"accountID\": " + testBookmarkId + ","
                 + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"AstronomyThree\","
                 + "\"api_identifier\": \"anotherAPI\","
                 + "\"timestamp\": 123,"
                 + "\"latitude\": -43.0522,"
-                + "\"longitude\": 1.2437"
+                + "\"longitude\": 1.2437,"
+                + "\"longitude\": 1.2437,"
+                + "\"date\": 1"
                 + "}";
     	
         logger.info("Testing updateBookmark with payload: {}", updatedBookmarkJson);
@@ -261,13 +268,14 @@ public class BookmarkControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookmarkJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountID").value((long) 3))
+                .andExpect(jsonPath("$.accountID").value(testBookmarkId))
                 .andExpect(jsonPath("$.whichAPI").value("AstronomyThree"))
                 .andExpect(jsonPath("$.api_identifier").value("anotherAPI"))
                 .andExpect(jsonPath("$.timestamp").value(123))
                 .andExpect(jsonPath("$.latitude").value(-43.0522))
                 .andExpect(jsonPath("$.longitude").value(1.2437))
-                .andExpect(jsonPath("$.displayName").value("test"));
+                .andExpect(jsonPath("$.displayName").value("test"))
+        		.andExpect(jsonPath("$.date").value(1));
 
         logger.info("testUpdateBookmark passed.");
     }
