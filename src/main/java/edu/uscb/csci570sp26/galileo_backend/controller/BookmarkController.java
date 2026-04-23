@@ -74,6 +74,7 @@ public class BookmarkController {
  			// while it isn't necessary to update the collectionID when updating a bookmark, we include it becuase updating bookmark and collection ID
  				bookmark.setCollectionID(newBookmark.getCollectionID());
  				bookmark.setDisplayName(newBookmark.getDisplayName());
+ 				bookmark.setDate(newBookmark.getDate());
  				return bookmarksRepository.save(bookmark);
  	        }).orElseThrow(() -> new RuntimeException("Bookmark not found with id " + id));
 	}
