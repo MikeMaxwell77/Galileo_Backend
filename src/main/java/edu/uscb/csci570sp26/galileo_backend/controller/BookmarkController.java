@@ -65,17 +65,35 @@ public class BookmarkController {
 	Bookmarks updateBookmark(@RequestBody Bookmarks newBookmark, @PathVariable Long id) {
 		return bookmarksRepository.findById(id)
  	    	.map(bookmark -> {
- 	    		bookmark.setAccountID(newBookmark.getAccountID());
- 	        	bookmark.setWhichAPI(newBookmark.getWhichAPI());
- 				bookmark.setAPI_identifier(newBookmark.getAPI_identifier());
- 				bookmark.setTimestamp(newBookmark.getTimestamp());
- 				bookmark.setLatitude(newBookmark.getLatitude());
- 				bookmark.setLongitude(newBookmark.getLongitude());
- 			// while it isn't necessary to update the collectionID when updating a bookmark, we include it becuase updating bookmark and collection ID
- 				bookmark.setCollectionID(newBookmark.getCollectionID());
- 				bookmark.setDisplayName(newBookmark.getDisplayName());
- 				bookmark.setDate(newBookmark.getDate());
- 				return bookmarksRepository.save(bookmark);
+    		    /*if (newBookmark.getAccountID() != null) {
+    		        bookmark.setAccountID(newBookmark.getAccountID());
+    		    }*/ //we don't need to adjust the bookmarkID
+    		    if (newBookmark.getWhichAPI() != null) {
+    		        bookmark.setWhichAPI(newBookmark.getWhichAPI());
+    		    }
+    		    if (newBookmark.getAPI_identifier() != null) {
+    		        bookmark.setAPI_identifier(newBookmark.getAPI_identifier());
+    		    }
+    		    if (newBookmark.getTimestamp() != 0L) {
+    		        bookmark.setTimestamp(newBookmark.getTimestamp());
+    		    }
+    		    if (newBookmark.getLatitude() != 0) {
+    		        bookmark.setLatitude(newBookmark.getLatitude());
+    		    }
+    		    if (newBookmark.getLongitude() != 0) {
+    		        bookmark.setLongitude(newBookmark.getLongitude());
+    		    }
+    		    if (newBookmark.getCollectionID() != null) {
+    		        bookmark.setCollectionID(newBookmark.getCollectionID());
+    		    }
+    		    if (newBookmark.getDisplayName() != null) {
+    		        bookmark.setDisplayName(newBookmark.getDisplayName());
+    		    }
+    		    if (newBookmark.getDate() != 0L) {
+    		        bookmark.setDate(newBookmark.getDate());
+    		    }
+
+    		    return bookmarksRepository.save(bookmark);
  	        }).orElseThrow(() -> new RuntimeException("Bookmark not found with id " + id));
 	}
 	
