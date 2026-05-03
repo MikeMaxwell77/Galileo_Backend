@@ -250,7 +250,6 @@ public class BookmarkControllerTest {
     public void testUpdateBookmark() throws Exception {
         // Arrange
     	String updatedBookmarkJson = "{"
-                + "\"accountID\": " + testBookmarkId + ","
                 + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"AstronomyThree\","
                 + "\"api_identifier\": \"anotherAPI\","
@@ -268,7 +267,7 @@ public class BookmarkControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookmarkJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountID").value(testBookmarkId))
+                .andExpect(jsonPath("$.accountID").value(1))
                 .andExpect(jsonPath("$.whichAPI").value("AstronomyThree"))
                 .andExpect(jsonPath("$.api_identifier").value("anotherAPI"))
                 .andExpect(jsonPath("$.timestamp").value(123))
@@ -280,6 +279,32 @@ public class BookmarkControllerTest {
         logger.info("testUpdateBookmark passed.");
     }
 
+    @Test
+    public void testUpdateDateBookmark() throws Exception {
+        // Arrange
+    	String updatedBookmarkJson = "{"
+                + "\"date\": 1"
+                + "}";
+    	
+        logger.info("Testing updateBookmark with payload: {}", updatedBookmarkJson);
+
+        // Act & Assert
+        mockMvc.perform(put("/bookmark/{id}", testBookmarkId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedBookmarkJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountID").value(1))
+                .andExpect(jsonPath("$.whichAPI").value("astronomy"))
+                .andExpect(jsonPath("$.api_identifier").value("api123"))
+                .andExpect(jsonPath("$.timestamp").value(123456789))
+                .andExpect(jsonPath("$.latitude").value(34.0522))
+                .andExpect(jsonPath("$.longitude").value(-118.2437))
+                .andExpect(jsonPath("$.displayName").value("test"))
+        		.andExpect(jsonPath("$.date").value(1));
+
+        logger.info("testUpdateBookmark passed.");
+    }
+    
     @Test
     public void testDeleteBookmark() throws Exception {
         // Arrange
