@@ -37,6 +37,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers(HttpMethod.PUT, "/bookmark/**").hasAuthority("USER")
             	.requestMatchers(HttpMethod.POST, "/bookmark/**").hasAuthority("USER")
+            	.requestMatchers(HttpMethod.DELETE, "/bookmark/**").hasAuthority("USER")
+            	.requestMatchers(HttpMethod.PUT, "/accounts/**").hasAuthority("USER")
+            	.requestMatchers(HttpMethod.POST, "/accounts/**").hasAuthority("USER")
+            	.requestMatchers(HttpMethod.DELETE, "/accounts/**").hasAuthority("USER")
                 .anyRequest().permitAll() // ✅ Allow all requests for now
             ) 
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
