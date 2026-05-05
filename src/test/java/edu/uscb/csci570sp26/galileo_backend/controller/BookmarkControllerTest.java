@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.hamcrest.Matchers; // easier to compare accounts for the list searches
 
 import com.jayway.jsonpath.JsonPath;
@@ -41,13 +43,27 @@ public class BookmarkControllerTest {
     private AccountsRepository accountsRepository;
 
     private Long testBookmarkId;
+    private Long testAccId;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 		// Insert a test bookmark into the database and retrieve its ID	
+        
+        Accounts newAcc = new Accounts();
+        newAcc.setEmail("johndoe@example.com");        
+        newAcc.setPassword(passwordEncoder.encode("password")); 
+        newAcc.setPrivacy(false);
+        
+        accountsRepository.save(newAcc);
+             
+        this.testAccId = newAcc.getId();
+        
         String newBookmarkJson = "{"
-                + "\"accountID\": 1,"
+                + "\"accountID\": "+ this.testAccId + ","
         		+ "\"displayName\": \"test\","
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api123\","
@@ -79,7 +95,7 @@ public class BookmarkControllerTest {
 
         // Seed a second bookmark for accountID 1
         String secondBookmarkJson = "{"
-                + "\"accountID\": 1,"
+        		+ "\"accountID\": "+ this.testAccId + ","
                 + "\"displayName\": \"test\","
                 + "\"whichAPI\": \"astronomy\","
                 + "\"api_identifier\": \"api456\","
@@ -95,12 +111,12 @@ public class BookmarkControllerTest {
                 .andExpect(status().isOk());
 
         // Act & Assert — all bookmarks for account 1 should appear
-        mockMvc.perform(get("/bookmarks/{accountID}", 1))
+        mockMvc.perform(get("/bookmarks/{accountID}", this.testAccId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(org.hamcrest.Matchers.greaterThanOrEqualTo(2)))
                 .andExpect(jsonPath("$[*].accountID",
-                        org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo(1))));
+                        org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo(this.testAccId.intValue()))));
 
         logger.info("testGetBookmarksbyAccountID passed.");
     }
@@ -115,12 +131,12 @@ public class BookmarkControllerTest {
         logger.info("Testing getAllBookmarksByAccount public search — account 1 is public, results should appear");
 
         // Act & Assert — bookmarks for a public account should be returned
-        mockMvc.perform(get("/bookmarks/search/{accountID}", 1))
+        mockMvc.perform(get("/bookmarks/search/{accountID}", this.testAccId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(org.hamcrest.Matchers.greaterThanOrEqualTo(1)))
                 .andExpect(jsonPath("$[*].accountID",
-                        org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo(1))));
+                        org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo(this.testAccId.intValue()))));
 
         logger.info("testGetAllBookmarksByAccountPublicOnly passed.");
     }
@@ -207,9 +223,9 @@ public class BookmarkControllerTest {
 		logger.info("Testing getAllBookmarksByAccount for accountID: 1");
 
 		// Act & Assert
-		mockMvc.perform(get("/bookmarks/{accountID}", 1))
+		mockMvc.perform(get("/bookmarks/{accountID}", this.testAccId))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].accountID").value(1));
+				.andExpect(jsonPath("$[0].accountID").value(this.testAccId.intValue()));
 
 		logger.info("testGetAllBookmarksByAccount passed.");
 	}
@@ -267,7 +283,7 @@ public class BookmarkControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookmarkJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountID").value(1))
+                .andExpect(jsonPath("$.accountID").value(this.testAccId))
                 .andExpect(jsonPath("$.whichAPI").value("AstronomyThree"))
                 .andExpect(jsonPath("$.api_identifier").value("anotherAPI"))
                 .andExpect(jsonPath("$.timestamp").value(123))
@@ -293,7 +309,7 @@ public class BookmarkControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookmarkJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountID").value(1))
+                .andExpect(jsonPath("$.accountID").value(this.testAccId))
                 .andExpect(jsonPath("$.whichAPI").value("astronomy"))
                 .andExpect(jsonPath("$.api_identifier").value("api123"))
                 .andExpect(jsonPath("$.timestamp").value(123456789))
